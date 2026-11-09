@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>СтудБюджет Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo">₽</div>
+        <div>
+          <h1>СтудБюджет <span class="pro-badge">PRO</span></h1>
+          <p class="subtitle">Финуниверситет · личный финансовый трекер</p>
+        </div>
+      </div>
+      <nav class="tabs" id="tabs">
+        <button class="tab active" data-tab="overview">Обзор</button>
+        <button class="tab" data-tab="expenses">Траты</button>
+        <button class="tab" data-tab="analytics">Аналитика</button>
+        <button class="tab" data-tab="goals">Цели</button>
+      </nav>
+    </header>
+
+    <main>
+
+      <!-- ═══ ОБЗОР ═══ -->
+      <section class="panel active" data-panel="overview">
+        <div class="card">
+          <div class="budget-row">
+            <label for="budgetInput">Бюджет на месяц</label>
+            <div class="input-wrap">
+              <input id="budgetInput" type="number" min="0" step="1" placeholder="30000">
+              <span class="currency">₽</span>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-label">Потрачено</span>
+              <span id="spentValue" class="stat-value">0 ₽</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Осталось</span>
+              <span id="leftValue" class="stat-value accent">0 ₽</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Использовано</span>
+              <span id="percentValue" class="stat-value">0%</span>
+            </div>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">
+            <h2>Последние траты</h2>
+            <button class="link-btn" data-jump="expenses">Все траты →</button>
+          </div>
+          <ul id="recentList" class="expense-list"></ul>
+          <p id="recentEmpty" class="empty">Трат пока нет. Перейди во вкладку «Траты» и добавь первую.</p>
+        </div>
+
+        <div class="card">
+          <div class="section-title">
+            <h2>Активные цели</h2>
+            <button class="link-btn" data-jump="goals">Все цели →</button>
+          </div>
+          <div id="goalsPreview" class="goals-preview"></div>
+          <p id="goalsEmpty" class="empty">Целей нет. Открой «Цели» и начни копить на мечту.</p>
+        </div>
+      </section>
+
+      <!-- ═══ ТРАТЫ ═══ -->
+      <section class="panel" data-panel="expenses">
+        <div class="card">
+          <h2>Добавить трату</h2>
+          <form id="expenseForm" class="form">
+            <input id="amountInput" type="number" min="1" step="1" placeholder="Сумма, ₽" required>
+            <select id="categorySelect" required>
+              <option value="" disabled selected>Категория</option>
+              <option value="Еда">🍔 Еда</option>
+              <option value="Транспорт">🚌 Транспорт</option>
+              <option value="Учёба">📚 Учёба</option>
+              <option value="Развлечения">🎉 Развлечения</option>
+              <option value="Жильё">🏠 Жильё</option>
+              <option value="Здоровье">💊 Здоровье</option>
+              <option value="Другое">📦 Другое</option>
+            </select>
+            <input id="descInput" type="text" placeholder="Описание (необязательно)" maxlength="40">
+            <button type="submit" class="btn-primary">Добавить трату</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="section-title">
+            <h2>История</h2>
+            <span id="countBadge" class="badge">0</span>
+          </div>
+          <div class="filters">
+            <select id="filterCategory">
+              <option value="">Все категории</option>
+              <option value="Еда">Еда</option>
+              <option value="Транспорт">Транспорт</option>
+              <option value="Учёба">Учёба</option>
+              <option value="Развлечения">Развлечения</option>
+              <option value="Жильё">Жильё</option>
+              <option value="Здоровье">Здоровье</option>
+              <option value="Другое">Другое</option>
+            </select>
+            <input id="filterSearch" type="text" placeholder="Поиск по описанию...">
+          </div>
+          <ul id="expenseList" class="expense-list"></ul>
+          <p id="expensesEmpty" class="empty">Ничего не найдено.</p>
+        </div>
+      </section>
+
+      <!-- ═══ АНАЛИТИКА ═══ -->
+      <section class="panel" data-panel="analytics">
+        <div class="card">
+          <h2>Распределение по категориям</h2>
+          <div class="analytics-grid">
+            <div class="donut-wrap">
+              <svg viewBox="0 0 120 120" class="donut">
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#1a2438" stroke-width="16"/>
+                <g id="donutSegments"></g>
+              </svg>
+              <div class="donut-center">
+                <span class="donut-label">Всего</span>
+                <span id="donutTotal" class="donut-value">0 ₽</span>
+              </div>
+            </div>
+            <div id="categoryLegend" class="legend"></div>
+          </div>
+          <p id="analyticsEmpty" class="empty">Добавь трат, чтобы увидеть статистику.</p>
+        </div>
+
+        <div class="card">
+          <h2>Расходы по месяцам</h2>
+          <div id="barsChart" class="bars-chart"></div>
+        </div>
+
+        <div class="card">
+          <h2>Ключевые метрики</h2>
+          <div class="metrics-grid">
+            <div class="metric">
+              <span class="metric-label">Средний день</span>
+              <span id="avgDaily" class="metric-value">0 ₽</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Топ категория</span>
+              <span id="topCategory" class="metric-value">—</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Всего трат</span>
+              <span id="totalCount" class="metric-value">0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ ЦЕЛИ ═══ -->
+      <section class="panel" data-panel="goals">
+        <div class="card">
+          <h2>Новая цель</h2>
+          <form id="goalForm" class="form">
+            <input id="goalName" type="text" placeholder="Например: ноутбук, поездка..." required maxlength="30">
+            <input id="goalTarget" type="number" min="1" step="1" placeholder="Цель, ₽" required>
+            <button type="submit" class="btn-primary">Создать цель</button>
+          </form>
+        </div>
+
+        <div id="goalsList" class="goals-list"></div>
+        <p id="goalsListEmpty" class="empty">Целей пока нет. Создай первую!</p>
+      </section>
+
+    </main>
+
+    <footer class="app-footer">
+      <span class="footer-note">Данные хранятся локально в браузере</span>
+      <div class="footer-actions">
+        <button id="exportBtn" class="btn-ghost">Экспорт JSON</button>
+        <button id="resetBtn" class="btn-ghost danger">Сбросить всё</button>
+      </div>
+    </footer>
+
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
